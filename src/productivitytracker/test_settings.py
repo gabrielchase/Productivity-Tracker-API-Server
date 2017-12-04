@@ -1,4 +1,4 @@
-from activitytracker.settings import *
+from productivitytracker.settings import *
 
 
 DATABASES = {
