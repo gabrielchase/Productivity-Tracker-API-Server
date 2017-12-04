@@ -1,21 +1,25 @@
 import pytest
 
+from django.contrib.auth import get_user_model
 from mixer.backend.django import mixer
-from users.models import User
 from users.tests.fixtures import new_user_info
 
 # IMPORTANT: Allows tests to write into the database 
 pytestmark = pytest.mark.django_db
+User = get_user_model()
 
 
 class TestUser:
 
     def test_model_create_user(self, new_user_info):
         new_user = User.objects.create_user(
-            new_user_info['first_name'],
-            new_user_info['last_name'],
-            new_user_info['email'],
-            new_user_info['password']
+            first_name=new_user_info['first_name'],
+            last_name=new_user_info['last_name'],
+            email=new_user_info['email'],
+            country=new_user_info['country'],
+            mobile_number=new_user_info['mobile_number'],
+            goal=new_user_info['goal'],
+            password=new_user_info['password']
         )
 
         expected_username = '{}{}'.format(new_user_info['first_name'], new_user_info['last_name'])
@@ -30,6 +34,12 @@ class TestUser:
         assert new_user.get_full_name() == '{}, {}'.format(new_user.last_name, new_user.first_name)
         assert new_user.get_short_name() == new_user.username
         assert str(new_user) == '({}, {}, {}, {}, {})'.format(new_user.id, new_user.first_name, new_user.last_name, new_user.email, new_user.username)
+
+        assert new_user.details.user.id == new_user.id
+        assert str(new_user.details) == str(new_user)
+        assert new_user.details.country == new_user_info['country']
+        assert new_user.details.mobile_number == new_user_info['mobile_number']
+        assert new_user.details.goal == new_user_info['goal']
 
     def test_model_exceptions(self, new_user_info):
         

@@ -12,6 +12,9 @@ def new_user_info():
         'first_name': mixer.faker.first_name(),
         'last_name': mixer.faker.last_name(),
         'email': mixer.faker.email(),
+        'country': mixer.faker.country(),
+        'mobile_number': mixer.faker.phone_number(),
+        'goal': mixer.faker.text(),
         'password': generate_random_password()
     }
     
