@@ -24,6 +24,8 @@ class TestUser:
 
         expected_username = '{}{}'.format(new_user_info['first_name'], new_user_info['last_name'])
         
+        # Check user is created
+        assert new_user.id
         assert new_user.id == 1, 'User instance should be created'
         assert new_user.first_name == new_user_info['first_name'], 'first_name should be the same'
         assert new_user.last_name == new_user_info['last_name'], 'last_name should be the same'
@@ -31,10 +33,12 @@ class TestUser:
         assert new_user.username == expected_username, 'username should be the same first_name + last_name'
         assert new_user.password != new_user_info['password'], 'password is hashed'
 
+        # Check user's methods 
         assert new_user.get_full_name() == '{}, {}'.format(new_user.last_name, new_user.first_name)
         assert new_user.get_short_name() == new_user.username
         assert str(new_user) == '({}, {}, {}, {}, {})'.format(new_user.id, new_user.first_name, new_user.last_name, new_user.email, new_user.username)
 
+        # Check user.details is created
         assert new_user.details.user.id == new_user.id
         assert str(new_user.details) == str(new_user)
         assert new_user.details.country == new_user_info['country']
@@ -51,7 +55,8 @@ class TestUser:
             new_user_info['password']
         )
 
-        assert u1.id == 2, 'User is created'
+        assert u1.id
+        assert u1.id == 2
 
         # Fail because the email address is already used
         with pytest.raises(ValueError) as excinfo:
@@ -101,9 +106,9 @@ class TestUser:
         assert u2.password != new_user_info['password']
         assert u2.username == '{}{}-{}'.format(new_user_info['first_name'], new_user_info['last_name'], instances+1)
         
-        # Same case as above but with a different instance appended to the end
+        # Same case as above but with the instance count appended to the end
         other_email_2 = mixer.faker.email()
-        instances_2 = User.objects.filter(first_name=new_user_info['first_name'], last_name=new_user_info['last_name']).count()
+        instances_count = User.objects.filter(first_name=new_user_info['first_name'], last_name=new_user_info['last_name']).count()
         u3 = User.objects.create_user(
             new_user_info['first_name'],
             new_user_info['last_name'],
@@ -115,5 +120,5 @@ class TestUser:
         assert u3.last_name == new_user_info['last_name']
         assert u3.email == other_email_2
         assert u3.password != new_user_info['password']
-        assert u3.username == '{}{}-{}'.format(new_user_info['first_name'], new_user_info['last_name'], instances_2+1)
+        assert u3.username == '{}{}-{}'.format(new_user_info['first_name'], new_user_info['last_name'], instances_count+1)
         
