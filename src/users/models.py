@@ -1,12 +1,11 @@
 from django.db import models
-
 from django.contrib.auth.models import (
     BaseUserManager, AbstractUser,)
 
 
-class UserManager(BaseUserManager):
+class BaseUserManager(BaseUserManager):
 
-    def create_user(self, first_name, last_name, email, password=None):
+    def create_user(self, first_name, last_name, email, country=None, goal=None, mobile_number=None, password=None,):
 
         if not email:
             raise ValueError('Users must register an email address')
@@ -33,14 +32,23 @@ class UserManager(BaseUserManager):
         new_user.set_password(password)
         new_user.save(using=self._db)
 
+        if new_user and (country or goal or mobile_number):
+            new_user_details = Details.objects.create(
+                user=new_user,
+                country=country,
+                goal=goal,
+                mobile_number=mobile_number
+            )
+            new_user_details.save()
+
         return new_user
 
 
-class User(AbstractUser):
+class BaseUser(AbstractUser):
 
     email = models.EmailField(max_length=255, unique=True, null=False)
 
-    objects = UserManager()
+    objects = BaseUserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [] # removes email from REQUIRED_FIELDS
@@ -53,3 +61,14 @@ class User(AbstractUser):
 
     def __str__(self):
         return '({}, {}, {}, {}, {})'.format(self.id, self.first_name, self.last_name, self.email, self.username)
+
+
+class Details(models.Model):
+
+    user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, primary_key=True)
+    country = models.CharField(max_length=255, null=True)
+    goal = models.TextField(null=True)
+    mobile_number = models.CharField(max_length=255, null=True)
+
+    def __str__(self):
+        return str(self.user)
