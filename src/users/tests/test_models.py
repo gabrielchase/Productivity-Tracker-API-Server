@@ -9,7 +9,7 @@ pytestmark = pytest.mark.django_db
 User = get_user_model()
 
 
-class TestUser:
+class TestUsersModels:
 
     def test_model_create_user(self, new_user_info):
         new_user = User.objects.create_user(
