@@ -23,7 +23,7 @@ class TestUser:
         )
 
         expected_username = '{}{}'.format(new_user_info['first_name'], new_user_info['last_name'])
-        
+
         # Check user is created
         assert new_user.id
         assert new_user.id == 1, 'User instance should be created'
@@ -92,33 +92,35 @@ class TestUser:
         # because it has a different email.
         # This user's username appends the number of instance it is in the database to the end
         other_email = mixer.faker.email()
-        instances = User.objects.filter(first_name=new_user_info['first_name'], last_name=new_user_info['last_name']).count()
         u2 = User.objects.create_user(
             new_user_info['first_name'],
             new_user_info['last_name'],
             other_email,
             new_user_info['password']
         )
+        instances = User.objects.filter(first_name=new_user_info['first_name'], last_name=new_user_info['last_name']).count()
+        expected_username = '{}{}-{}'.format(new_user_info['first_name'], new_user_info['last_name'], instances)
 
         assert u2.first_name == new_user_info['first_name']
         assert u2.last_name == new_user_info['last_name']
         assert u2.email == other_email
         assert u2.password != new_user_info['password']
-        assert u2.username == '{}{}-{}'.format(new_user_info['first_name'], new_user_info['last_name'], instances+1)
+        assert u2.username == expected_username
         
         # Same case as above but with the instance count appended to the end
         other_email_2 = mixer.faker.email()
-        instances_count = User.objects.filter(first_name=new_user_info['first_name'], last_name=new_user_info['last_name']).count()
         u3 = User.objects.create_user(
             new_user_info['first_name'],
             new_user_info['last_name'],
             other_email_2,
             new_user_info['password']
         )
+        instances = User.objects.filter(first_name=new_user_info['first_name'], last_name=new_user_info['last_name']).count()
+        expected_username = '{}{}-{}'.format(new_user_info['first_name'], new_user_info['last_name'], instances)
 
         assert u3.first_name == new_user_info['first_name']
         assert u3.last_name == new_user_info['last_name']
         assert u3.email == other_email_2
         assert u3.password != new_user_info['password']
-        assert u3.username == '{}{}-{}'.format(new_user_info['first_name'], new_user_info['last_name'], instances_count+1)
+        assert u3.username == expected_username
         
