@@ -21,11 +21,7 @@ class BaseUserManager(BaseUserManager):
 
         new_user.set_password(password)
         new_user.set_username()
-        # print(BaseUser.objects.all())
         new_user.save(using=self._db)
-        
-        # Set username after User has been saved to the database
-        # print(BaseUser.objects.all())
 
         if new_user and (country or goal or mobile_number):
             new_user_details = Details.objects.create(

@@ -42,3 +42,32 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
         return new_user
+
+    def update(self, user_instance, validated_data):
+        user_instance.first_name = validated_data.get('first_name')
+        user_instance.last_name = validated_data.get('last_name')
+        user_instance.email = validated_data.get('email')
+        user_instance.set_username()
+        
+        details = validated_data.get('details')
+
+        if details:
+            try:
+                detail_instance = Details.objects.get(user_id=user_instance.id)
+                detail_instance.country = details.get('country')
+                detail_instance.goal = details.get('goal')
+                detail_instance.mobile_number = details.get('mobile_number')
+                detail_instance.save()
+            except Details.DoesNotExist:
+                new_details = Details.objects.create(
+                    user=user_instance,
+                    country=details.get('country'),
+                    goal=details.get('goal'),
+                    mobile_number=details.get('mobile_number')
+                )
+                new_details.save()
+        
+        user_instance.save()
+
+        return user_instance
+        
