@@ -13,24 +13,19 @@ class BaseUserManager(BaseUserManager):
         if self.model.objects.filter(email=email).first():
             raise ValueError('Email address is already taken')
 
-        username = '{}{}'.format(first_name, last_name)
-
-        if self.model.objects.filter(username=username).first():
-            instances = self.model.objects.filter(first_name=first_name, last_name=last_name).count()
-            print("There are {} instances of '{} {}'. Appending {} to new_user's username"
-                .format(instances, first_name, last_name, instances+1))
-            username += '-{}'.format(instances + 1)
-            print('Username created for new_user: {}'.format(username))
-
         new_user = self.model(
             first_name=first_name,
             last_name=last_name,
-            email=email,
-            username=username
+            email=email
         )
 
         new_user.set_password(password)
+        new_user.set_username()
+        # print(BaseUser.objects.all())
         new_user.save(using=self._db)
+        
+        # Set username after User has been saved to the database
+        # print(BaseUser.objects.all())
 
         if new_user and (country or goal or mobile_number):
             new_user_details = Details.objects.create(
@@ -58,6 +53,19 @@ class BaseUser(AbstractUser):
 
     def get_short_name(self):
         return self.username
+
+    def set_username(self):
+        instances = BaseUser.objects.filter(first_name=self.first_name, last_name=self.last_name).count()
+        print("There are {} instances of '{} {}'".format(instances, self.first_name, self.last_name))
+        
+        if instances:
+            print("Appending '-{}' to new_user's username".format(instances+1))
+            self.username =  '{}{}-{}'.format(self.first_name, self.last_name, instances+1)
+        else:
+            self.username =  '{}{}'.format(self.first_name, self.last_name)
+        
+        print('Username of {} {}: {}'.format(self.first_name, self.last_name, self.username))
+        self.save()
 
     def __str__(self):
         return '({}, {}, {}, {}, {})'.format(self.id, self.first_name, self.last_name, self.email, self.username)
