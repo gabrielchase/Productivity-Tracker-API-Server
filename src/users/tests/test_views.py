@@ -10,6 +10,7 @@ from users.tests.fixtures import (
     json_user_with_details_with_one_null_detail, 
     json_user_no_details
 )
+from users.models import Details
 from users.views import UserViewSet
 
 import pytest
@@ -78,7 +79,7 @@ class TestUsersViews:
         # Assert it exists and has no details 
         assert response.status_code == 201
         assert response.data.get('id') 
-        assert not response.data.get('details')
+        assert response.data.get('details')
 
     def test_view_list_and_retrieve_users(self, new_user_info, json_user_no_details):
         # Populate the database
@@ -101,6 +102,7 @@ class TestUsersViews:
         assert post_response.status_code == 201
         assert post_response.data.get('id') 
         assert post_response.data.get('email') == json_user_no_details['email']
+        assert post_response.data.get('details')
         
         # List all users and make sure there are 2, one populated by the db and one from posted data
         get_view = UserViewSet.as_view({'get': 'list'})
@@ -177,6 +179,7 @@ class TestUsersViews:
         assert response.data.get('first_name') == json_user_no_details['first_name'] == edited_user.first_name
         assert response.data.get('last_name') == json_user_no_details['last_name'] == edited_user.last_name
         assert response.data.get('email') == json_user_no_details['email'] == edited_user.email
+        assert response.data.get('details')
         assert not response.data.get('details', {}).get('country')
         assert not response.data.get('details', {}).get('goal')
         assert not response.data.get('details', {}).get('mobile_number')
@@ -198,7 +201,8 @@ class TestUsersViews:
         response = view(request, pk=new_user.id)
 
         assert response.status_code == 204
-
+        assert User.objects.filter(id=new_user.id).count() == 0
+        assert Details.objects.filter(user=new_user).count() == 0
         
 
 
