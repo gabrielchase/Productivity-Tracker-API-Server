@@ -23,14 +23,14 @@ class BaseUserManager(BaseUserManager):
         new_user.set_username()
         new_user.save(using=self._db)
 
-        if new_user and (country or goal or mobile_number):
-            new_user_details = Details.objects.create(
-                user=new_user,
-                country=country,
-                goal=goal,
-                mobile_number=mobile_number
-            )
-            new_user_details.save()
+        
+        new_user_details = Details.objects.create(
+            user=new_user,
+            country=country,
+            goal=goal,
+            mobile_number=mobile_number
+        )
+        new_user_details.save()
 
         return new_user
 
