@@ -10,14 +10,14 @@ def generate_random_password():
     N = random.randint(7, 30)
     return ''.join(random.choices(string.ascii_lowercase + string.ascii_uppercase + string.digits, k=N))
 
-def get_jwt_token(email, password):
+def get_jwt_header(email, password):
     jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
     jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-
-    user = User.objects.get(email=email)
     
-    if user.check_password(password):
+    user = User.objects.get(email=email)    
+    
+    if user and user.check_password(password):
         payload = jwt_payload_handler(user)
-        return jwt_encode_handler(payload)
+        return 'JWT {}'.format(jwt_encode_handler(payload))
     else:
         return False
