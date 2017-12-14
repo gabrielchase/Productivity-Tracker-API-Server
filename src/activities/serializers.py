@@ -4,8 +4,9 @@ from rest_framework.renderers import JSONRenderer
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-
 from activities.models import (Activity, Category)
+from activities.utils import handle_category_name
+
 from users.serializers import (UserSerializer, DetailSerializer)
 from users.models import Details
 
@@ -45,3 +46,23 @@ class ActivitySerializer(serializers.ModelSerializer):
         }
 
         return json.loads(json.dumps(user_details))
+
+    def create(self, data):
+        category_name = handle_category_name(data.pop('category', {}).get('name'))
+        category = Category.objects.filter(name=category_name).first()
+
+        if not category:
+            category = Category.objects.create(name=category_name)
+
+        new_activity = Activity.objects.create(
+            name=data.get('name'),
+            description=data.get('description'),
+            start_time=data.get('start_time'),
+            end_time=data.get('end_time'),
+            productive=data.get('productive'),
+            user=self.context['request'].user,
+            category=category
+        )
+
+        return new_activity
+        
