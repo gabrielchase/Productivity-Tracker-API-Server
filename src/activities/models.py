@@ -22,7 +22,7 @@ class Activity(models.Model):
     end_time = models.DateTimeField(auto_now=False, auto_now_add=False)
     productive = models.BooleanField()
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, related_name="activities", on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name='activities', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

@@ -64,7 +64,7 @@ class BaseUser(AbstractUser):
         self.save()
 
     def __str__(self):
-        return '({}, {}, {}, {}, {})'.format(self.id, self.first_name, self.last_name, self.email, self.username)
+        return self.email
 
 
 class Details(models.Model):
