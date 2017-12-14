@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 from activities.models import (Activity, Category)
-from activities.utils import handle_category_name
+from activities.utils import handle_activity_category
 
 from users.serializers import (UserSerializer, DetailSerializer)
 from users.models import Details
@@ -48,12 +48,8 @@ class ActivitySerializer(serializers.ModelSerializer):
         return json.loads(json.dumps(user_details))
 
     def create(self, data):
-        category_name = handle_category_name(data.pop('category', {}).get('name'))
-        category = Category.objects.filter(name=category_name).first()
-
-        if not category:
-            category = Category.objects.create(name=category_name)
-
+        category = handle_activity_category(data.pop('category', {}).get('name'))
+        
         new_activity = Activity.objects.create(
             name=data.get('name'),
             description=data.get('description'),
@@ -66,3 +62,15 @@ class ActivitySerializer(serializers.ModelSerializer):
 
         return new_activity
         
+    def update(self, activity_instance, data):
+        category = handle_activity_category(data.pop('category', {}).get('name'))
+
+        activity_instance.name = data.get('name')
+        activity_instance.description = data.get('description')
+        activity_instance.start_time = data.get('start_time')
+        activity_instance.end_time = data.get('end_time')
+        activity_instance.productive = data.get('productive')
+        activity_instance.category = category
+        activity_instance.save()
+        
+        return activity_instance
