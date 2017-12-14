@@ -26,11 +26,3 @@ class Activity(models.Model):
 
     def __str__(self):
         return self.name
-
-
-def pre_save_activity(sender, instance, *args,  **kwargs):
-    # if kwargs.get('created', False):
-    #     UserProfile.objects.get_or_create(user=kwargs.get('instance'))
-    print('BOYBOYBOY')
-
-pre_save.connect(pre_save_activity, sender=Activity)
