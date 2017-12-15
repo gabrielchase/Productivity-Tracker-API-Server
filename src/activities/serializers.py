@@ -17,7 +17,7 @@ class CategorySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Category
-        fields = ('name',)
+        fields = ('id', 'name')
 
 
 class ActivitySerializer(serializers.ModelSerializer):
