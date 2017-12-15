@@ -20,8 +20,3 @@ class UserPermission(permissions.BasePermission):
         # Allow user to GET, PUT, DELETE
         if request.method in permissions.SAFE_METHODS + ('PUT', 'DELETE'):
             return obj == request.user
-
-        
-
-
-        
