@@ -1,10 +1,9 @@
-import pytest
-
 from django.contrib.auth import get_user_model
 from mixer.backend.django import mixer
 from users.tests.fixtures import new_user_info
 
 # IMPORTANT: Allows tests to write into the database 
+import pytest
 pytestmark = pytest.mark.django_db
 User = get_user_model()
 
@@ -26,7 +25,6 @@ class TestUsersModels:
 
         # Check user is created
         assert new_user.id
-        assert new_user.id == 1, 'User instance should be created'
         assert new_user.first_name == new_user_info['first_name'], 'first_name should be the same'
         assert new_user.last_name == new_user_info['last_name'], 'last_name should be the same'
         assert new_user.email == new_user_info['email'], 'email should be the same'
@@ -48,6 +46,7 @@ class TestUsersModels:
     def test_model_exceptions(self, new_user_info):
         
         # User with first_name and last_name is created
+        print(User.objects.all())
         u1 = User.objects.create_user(
             new_user_info['first_name'],
             new_user_info['last_name'],
@@ -56,7 +55,6 @@ class TestUsersModels:
         )
 
         assert u1.id
-        assert u1.id == 2
 
         # Fail because the email address is already used
         with pytest.raises(ValueError) as excinfo:
