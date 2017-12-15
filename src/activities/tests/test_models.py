@@ -1,5 +1,3 @@
-import pytest
-
 from django.contrib.auth import get_user_model
 from mixer.backend.django import mixer
 
@@ -10,6 +8,7 @@ from activities.tests.fixtures import new_activity_info
 from activities.utils import handle_activity_category
 
 # IMPORTANT: Allows tests to write into the database 
+import pytest
 pytestmark = pytest.mark.django_db
 User = get_user_model()
 
