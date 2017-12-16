@@ -23,6 +23,32 @@ ACTIVITIES_URI = 'api/activities'
 
 class TestActivitiesViews:
 
+    def test_user_view(self, new_user_info):
+        view = ActivityViewSet.as_view({'get': 'list'})
+        request = factory.get(ACTIVITIES_URI)
+        response = view(request)
+
+        assert response.status_code == 401
+
+        User.objects.create_user(
+            first_name=new_user_info['first_name'],
+            last_name=new_user_info['last_name'],
+            email=new_user_info['email'],
+            country=new_user_info['country'],
+            mobile_number=new_user_info['mobile_number'],
+            goal=new_user_info['goal'],
+            password=new_user_info['password']
+        )
+
+        view = ActivityViewSet.as_view({'get': 'list'})
+        request = factory.get(
+            ACTIVITIES_URI,
+            HTTP_AUTHORIZATION=get_jwt_header(new_user_info['email'], new_user_info['password'])
+        )
+        response = view(request)
+        
+        assert response.status_code == 403
+
     def test_view_activity_successful_crud(self, new_user_info, new_activity_info):
         # Create user
         User.objects.create_user(
