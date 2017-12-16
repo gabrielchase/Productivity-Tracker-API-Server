@@ -22,7 +22,7 @@ ACTIVITIES_URI = 'api/activities'
 
 class TestActivitiesViews:
 
-    def test_view_create_activity(self, new_user_info, new_activity_info):
+    def test_view_activity_permissions(self, new_user_info, new_activity_info):
         # Create first user
         User.objects.create_user(
             first_name=new_user_info['first_name'],
@@ -71,7 +71,7 @@ class TestActivitiesViews:
         )
 
         # u2 can't GET created activity 
-        bad_retrieve = ActivityViewSet.as_view({'get': 'retrieve'})
+        bad_retrieve_view = ActivityViewSet.as_view({'get': 'retrieve'})
         bad_retrieve_request = factory.get(
             ACTIVITIES_URI+'/{}'.format(activity_id), 
             HTTP_AUTHORIZATION=get_jwt_header(onui['email'], onui['password'])
@@ -79,4 +79,29 @@ class TestActivitiesViews:
         bad_retrieve_response = view(bad_retrieve_request, pk=activity_id)
 
         assert bad_retrieve_response.status_code == 405
+
+        # u2 can't PUT created activity 
+        edited_activity_info = new_activity_info
+        edited_activity_info['name'] = 'slkdjfalsdf'
+        edited_activity_info['description'] = 'slkdjfalsdf'
+
+        bad_put_view = ActivityViewSet.as_view({'put': 'update'})
+        bad_put_request = factory.put(
+            ACTIVITIES_URI+'/{}'.format(activity_id), 
+            data=json.dumps(edited_activity_info), 
+            content_type='application/json',
+            HTTP_AUTHORIZATION=get_jwt_header(onui['email'], onui['password'])
+        )
+        response = view(bad_put_request, pk=activity_id)
         
+        assert response.status_code == 405
+
+        # u2 can't DELETE created activity 
+        bad_delete_view = ActivityViewSet.as_view({'delete': 'destroy'})
+        bad_delete_request = factory.delete(
+            ACTIVITIES_URI+'/{}'.format(activity_id),
+            HTTP_AUTHORIZATION=get_jwt_header(onui['email'], onui['password'])
+        )
+        bad_delete_response = view(bad_delete_request, pk=activity_id)
+
+        assert response.status_code == 405
