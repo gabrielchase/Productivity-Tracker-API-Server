@@ -52,15 +52,15 @@ class BaseUser(AbstractUser):
 
     def set_username(self):
         instances = BaseUser.objects.filter(first_name=self.first_name, last_name=self.last_name).count()
-        print("There are {} instances of '{} {}'".format(instances, self.first_name, self.last_name))
+        # print("There are {} instances of '{} {}'".format(instances, self.first_name, self.last_name))
         
         if instances:
-            print("Appending '-{}' to new_user's username".format(instances+1))
+            # print("Appending '-{}' to new_user's username".format(instances+1))
             self.username =  '{}{}-{}'.format(self.first_name, self.last_name, instances+1)
         else:
             self.username =  '{}{}'.format(self.first_name, self.last_name)
         
-        print('Username of {} {}: {}'.format(self.first_name, self.last_name, self.username))
+        # print('Username of {} {}: {}'.format(self.first_name, self.last_name, self.username))
         self.save()
 
     def __str__(self):
