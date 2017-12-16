@@ -16,6 +16,8 @@ def new_user_info():
         'goal': mixer.faker.text(),
         'password': generate_random_password()
     }
+
+other_new_user_info = new_user_info
     
 @pytest.fixture
 def json_user_with_details():
