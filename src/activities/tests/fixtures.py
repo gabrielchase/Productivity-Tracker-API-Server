@@ -23,5 +23,7 @@ def new_activity_info():
         'start_time': timezone.now(),
         'end_time': timezone.now() + timedelta(hours=1),
         'productive': return_bool(),
-        'category': mixer.faker.genre()
+        'category': {
+            'name': mixer.faker.genre()
+        }
     }

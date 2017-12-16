@@ -26,7 +26,7 @@ class TestActivitiesModels:
             password=new_user_info['password']
         )
 
-        category = handle_activity_category(new_activity_info['category'])
+        category = handle_activity_category(new_activity_info['category']['name'])
 
         new_activity = Activity.objects.create(
             name=new_activity_info['name'],
