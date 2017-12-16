@@ -8,7 +8,8 @@ from users.tests.fixtures import (
     new_user_info, 
     json_user_with_details, 
     json_user_with_details_with_one_null_detail, 
-    json_user_no_details
+    json_user_no_details,
+    other_new_user_info
 )
 from users.models import Details
 from users.views import UserViewSet
@@ -224,7 +225,57 @@ class TestUsersViews:
         assert response.status_code == 204
         assert User.objects.filter(id=new_user.id).count() == 0
         assert Details.objects.filter(user=new_user).count() == 0
-        
 
+    def test_view_bad_permissions(self, new_user_info):
+        u1 = User.objects.create_user(
+            first_name=new_user_info['first_name'],
+            last_name=new_user_info['last_name'],
+            email=new_user_info['email'],
+            country=new_user_info['country'],
+            mobile_number=new_user_info['mobile_number'],
+            goal=new_user_info['goal'],
+            password=new_user_info['password']
+        )
 
+        onui = other_new_user_info()
+        u2 = User.objects.create_user(
+            first_name=onui['first_name'],
+            last_name=onui['last_name'],
+            email=onui['email'],
+            country=onui['country'],
+            mobile_number=onui['mobile_number'],
+            goal=onui['goal'],
+            password=onui['password']
+        )
 
+        retrieve_view = UserViewSet.as_view({'get': 'retrieve'})
+        retrieve_request = factory.get(
+            USERS_URI+'/{}'.format(u1.id),
+            HTTP_AUTHORIZATION=get_jwt_header(onui['email'], onui['password'])
+        )
+        retrieve_response = retrieve_view(retrieve_request, pk=u1.id)
+
+        assert retrieve_response.status_code == 403
+
+        edited_user_info = new_user_info
+        edited_user_info['first_name'] = 'Jack'
+
+        put_view = UserViewSet.as_view({'put': 'update'})
+        put_request = factory.put(
+            USERS_URI+'/{}'.format(u1.id), 
+            data=json.dumps(edited_user_info), 
+            content_type='application/json',
+            HTTP_AUTHORIZATION=get_jwt_header(onui['email'], onui['password'])
+        )
+        put_response = put_view(put_request, pk=u1.id)
+
+        assert put_response.status_code == 403
+
+        delete_view = UserViewSet.as_view({'delete': 'destroy'})
+        delete_request = factory.get(
+            USERS_URI+'/{}'.format(u1.id),
+            HTTP_AUTHORIZATION=get_jwt_header(onui['email'], onui['password'])
+        )
+        delete_response = delete_view(delete_request, pk=u1.id)
+
+        assert delete_response.status_code == 405
