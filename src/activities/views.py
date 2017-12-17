@@ -17,6 +17,33 @@ class ActivityViewSet(ModelViewSet):
 
     def get_queryset(self):
         try:
-            return Activity.objects.filter(user=self.request.user)
+            name = self.request.query_params.get('name')
+            description = self.request.query_params.get('description')
+            start_time = self.request.query_params.get('start_time')
+            end_time = self.request.query_params.get('end_time')
+            productive = self.request.query_params.get('productive')
+            category = self.request.query_params.get('category')
+            
+            activities = Activity.objects.filter(user=self.request.user)
+
+            if name:
+                activities = activities.filter(name__icontains=name)
+
+            if description:
+                activities = activities.filter(description__icontains=description)
+
+            if start_time:
+                activities = activities.filter(start_time__icontains=start_time)
+
+            if end_time:
+                activities = activities.filter(end_time__icontains=end_time)
+
+            if productive:
+                activities = activities.filter(productive=productive)
+
+            if category:
+                activities = activities.filter(category__name=category)
+
+            return activities
         except TypeError:
             raise exceptions.NotAuthenticated()
