@@ -79,25 +79,16 @@ WSGI_APPLICATION = 'productivitytracker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-import dj_database_url
-
-LOCAL_DB_SETTINGS = {
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'productivitytracker_db',
-    'USER': 'postgres',
-    'PASSWORD': 'password',
-    'HOST': 'localhost',
-    'PORT': '',
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'd906obt2d73gql',
+        'USER': 'dlncotxujsjxgj',
+        'PASSWORD': '9f869bf5e58070bfeb1d0bed565dbf555eb7e8c2a4ad9bf1d469738b97bf8041',
+        'HOST': 'ec2-184-72-228-128.compute-1.amazonaws.com',
+        'PORT': '5432',
+    }
 }
-
-DATABASES = {}
-DATABASES['default'] = dj_database_url.parse('postgres://{}:{}@{}:{}/{}'.format(
-    LOCAL_DB_SETTINGS['USER'],
-    LOCAL_DB_SETTINGS['PASSWORD'],
-    LOCAL_DB_SETTINGS['HOST'],
-    LOCAL_DB_SETTINGS['PORT'],
-    LOCAL_DB_SETTINGS['NAME']
-))
 
 
 # Password validation
@@ -144,5 +135,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'staticfiles'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 
 AUTH_USER_MODEL = 'users.BaseUser'
