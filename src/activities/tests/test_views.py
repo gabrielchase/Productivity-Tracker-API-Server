@@ -24,11 +24,11 @@ ACTIVITIES_URI = 'api/activities'
 class TestActivitiesViews:
 
     def test_user_view(self, new_user_info, new_activity_info):
-        with pytest.raises(TypeError) as excinfo:
-            view = ActivityViewSet.as_view({'get': 'list'})
-            request = factory.get(ACTIVITIES_URI)
-            response = view(request)
-        assert str(excinfo.value) == "int() argument must be a string, a bytes-like object or a number, not 'AnonymousUser'"
+        view = ActivityViewSet.as_view({'get': 'list'})
+        request = factory.get(ACTIVITIES_URI)
+        response = view(request)
+
+        assert response.status_code == 401
 
         u1 = User.objects.create_user(
             first_name=new_user_info['first_name'],
