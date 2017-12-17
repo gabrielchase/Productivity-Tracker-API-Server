@@ -23,14 +23,14 @@ ACTIVITIES_URI = 'api/activities'
 
 class TestActivitiesViews:
 
-    def test_user_view(self, new_user_info):
-        view = ActivityViewSet.as_view({'get': 'list'})
-        request = factory.get(ACTIVITIES_URI)
-        response = view(request)
+    def test_user_view(self, new_user_info, new_activity_info):
+        with pytest.raises(TypeError) as excinfo:
+            view = ActivityViewSet.as_view({'get': 'list'})
+            request = factory.get(ACTIVITIES_URI)
+            response = view(request)
+        assert str(excinfo.value) == "int() argument must be a string, a bytes-like object or a number, not 'AnonymousUser'"
 
-        assert response.status_code == 401
-
-        User.objects.create_user(
+        u1 = User.objects.create_user(
             first_name=new_user_info['first_name'],
             last_name=new_user_info['last_name'],
             email=new_user_info['email'],
@@ -40,6 +40,18 @@ class TestActivitiesViews:
             password=new_user_info['password']
         )
 
+        category = handle_activity_category(new_activity_info['category']['name'])
+
+        new_activity = Activity.objects.create(
+            name=new_activity_info['name'],
+            description=new_activity_info['description'],
+            start_time=new_activity_info['start_time'],
+            end_time=new_activity_info['end_time'],
+            productive=new_activity_info['productive'],
+            user=u1,
+            category=category
+        )
+
         view = ActivityViewSet.as_view({'get': 'list'})
         request = factory.get(
             ACTIVITIES_URI,
@@ -47,7 +59,10 @@ class TestActivitiesViews:
         )
         response = view(request)
         
-        assert response.status_code == 403
+        assert response.status_code == 200
+
+        for activity in response.data:
+            assert activity.get('user_details', {}).get('email') == new_user_info['email']
 
     def test_view_activity_successful_crud(self, new_user_info, new_activity_info):
         # Create user
