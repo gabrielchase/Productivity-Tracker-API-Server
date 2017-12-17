@@ -26,7 +26,7 @@ SECRET_KEY = '$6v3_jrtnztszd#e$1n4^#i9s0%@x87ol1qf^9wb_#l4#+vjwv'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -79,16 +79,25 @@ WSGI_APPLICATION = 'productivitytracker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'productivitytracker_db',
-        'USER': 'postgres',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
+import dj_database_url
+
+LOCAL_DB_SETTINGS = {
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'NAME': 'productivitytracker_db',
+    'USER': 'postgres',
+    'PASSWORD': 'password',
+    'HOST': 'localhost',
+    'PORT': '',
 }
+
+DATABASES = {}
+DATABASES['default'] = dj_database_url.parse('postgres://{}:{}@{}:{}/{}'.format(
+    LOCAL_DB_SETTINGS['USER'],
+    LOCAL_DB_SETTINGS['PASSWORD'],
+    LOCAL_DB_SETTINGS['HOST'],
+    LOCAL_DB_SETTINGS['PORT'],
+    LOCAL_DB_SETTINGS['NAME']
+))
 
 
 # Password validation
