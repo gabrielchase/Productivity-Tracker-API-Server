@@ -82,10 +82,10 @@ WSGI_APPLICATION = 'productivitytracker.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'd1s1nj256760tl',
-        'USER': 'sypuybkslccagh',
-        'PASSWORD': '876f8880f9916c47ad091b5b04863b621b4c18b1db39f09fb99b395904a0e425',
-        'HOST': 'ec2-107-21-201-57.compute-1.amazonaws.com',
+        'NAME': 'productivitytracker_db',
+        'USER': 'postgres',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
