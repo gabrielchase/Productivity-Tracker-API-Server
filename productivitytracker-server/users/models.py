@@ -70,9 +70,9 @@ class BaseUser(AbstractUser):
 class Details(models.Model):
 
     user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, primary_key=True)
-    country = models.CharField(max_length=255, null=True)
-    goal = models.TextField(null=True)
-    mobile_number = models.CharField(max_length=255, null=True)
+    country = models.CharField(max_length=255, null=True, blank=True)
+    goal = models.TextField(null=True, blank=True)
+    mobile_number = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return str(self.user)
