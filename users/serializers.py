@@ -14,6 +14,11 @@ class DetailSerializer(serializers.ModelSerializer):
         fields = ('country', 'goal', 'mobile_number')
 
 
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(max_length=255)
+
+
 class UserSerializer(serializers.ModelSerializer):
 
     details = DetailSerializer()
@@ -71,3 +76,5 @@ class UserSerializer(serializers.ModelSerializer):
         user_instance.save()
 
         return user_instance
+
+
