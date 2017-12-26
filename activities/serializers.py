@@ -55,7 +55,7 @@ class ActivitySerializer(serializers.ModelSerializer):
             description=data.get('description'),
             start_time=data.get('start_time'),
             end_time=data.get('end_time'),
-            productive=data.get('productive'),
+            productive=data.get('productive') or False,
             user=self.context['request'].user,
             category=category
         )
